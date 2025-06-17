@@ -1,0 +1,24 @@
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+# Copy source files
+COPY src/main/java/com/shipproxy/server/ProxyServer.java /app/
+
+# Create necessary directories
+RUN mkdir -p /app/com/shipproxy/server
+
+# Move source file to correct package structure
+RUN mv ProxyServer.java /app/com/shipproxy/server/
+
+# Compile Java source
+RUN javac com/shipproxy/server/ProxyServer.java
+
+# Expose port
+EXPOSE 9090
+
+# Set default environment variables
+ENV PORT=9090
+
+# Run the application
+CMD java com.shipproxy.server.ProxyServer --port ${PORT}

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  proxy-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: offshore-proxy-server
+    ports:
+      - "9090:9090"
+    environment:
+      - PORT=9090
+    networks:
+      - proxy-network
+    restart: unless-stopped
+
+  proxy-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: ship-proxy-client
+    ports:
+      - "8080:8080"
+    environment:
+      - LOCAL_PORT=8080
+      - SERVER_HOST=proxy-server
+      - SERVER_PORT=9090
+    depends_on:
+      - proxy-server
+    networks:
+      - proxy-network
+    restart: unless-stopped
+
+networks:
+  proxy-network:
+    driver: bridge
